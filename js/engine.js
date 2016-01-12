@@ -56,7 +56,7 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        win.requestAnimationFrame(main);
+        if (gameinfo.lives && gameinfo.level < gameinfo.levels.length) win.requestAnimationFrame(main);
     }
 
     /* This function does some initial setup that should only occur once,
@@ -95,6 +95,7 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
+        gameinfo.update();
     }
 
     /* This function initially draws the "game level", it will then call
@@ -153,7 +154,7 @@ var Engine = (function(global) {
 
         player.render();
 
-        score.render();
+        gameinfo.render();
     }
 
     /* This function does nothing but it could have been a good place to
