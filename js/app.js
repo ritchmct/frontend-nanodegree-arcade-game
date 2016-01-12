@@ -8,7 +8,7 @@ var cols = 5;
 // Values are [#of enemies, max speed factor]
 var levels = [[4, 1], [5, 1.2], [6, 1.7]];
 // Initial level is 0
-var level = 1;
+var level = 0;
 var collision = false;
 
 // Display level
@@ -49,7 +49,7 @@ Enemy.prototype.update = function(dt) {
     // Check for collision
     if ( Math.abs(this.y - player.y) < 20 ) {
         if (( player.x >= this.x && player.x - this.x < 80) ||
-            ( this.x > player.x && this.x - player.x < 80 )) collision = true;
+            ( this.x > player.x && this.x - player.x < 80 )) player.collision = true;
     }
 };
 
@@ -63,13 +63,15 @@ var Player = function() {
     this.hero = 'images/char-cat-girl.png';
     this.x = (cols%2 + 1) * tileX;
     this.y = (rows + 1) * tileY - 10;
-
+    this.collision = false;
 };
 
 // This class requires an update(),
 Player.prototype.update = function(dt) {
-    if (collision) {
-        collision = false;
+    // In the event of a collision player goes back to start position
+    // and one life is lost
+    if (this.collision) {
+        this.collision = false;
         this.x = (cols%2 + 1) * tileX;
         this.y = (rows + 1) * tileY - 10;
     }
@@ -79,6 +81,7 @@ Player.prototype.update = function(dt) {
     if (this.y < -10 ) this.y = -10;
     if (this.y > (rows + 1) * tileY - 10) this.y = (rows + 1) * tileY - 10;
 };
+
 // render()
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.hero), this.x, this.y);
@@ -86,12 +89,23 @@ Player.prototype.render = function() {
     ctx.fillText(levelTxt, 10, canvas.height-30);
     ctx.strokeText(levelTxt, 10, canvas.height-30);
 };
+
 // and a handleInput() method.
 Player.prototype.handleInput = function(key) {
     if (key === "left") this.x += -tileX;
     if (key === "right") this.x += tileX;
     if (key === "up") this.y += -tileY;
     if (key === "down") this.y += tileY;
+};
+
+var Score = function() {
+    this.value = 0;
+};
+
+Score.prototype.render = function() {
+    var scoreTxt = "SCORE: " + parseInt(this.value);
+    ctx.fillText(scoreTxt, 300, canvas.height-30);
+    ctx.strokeText(scoreTxt, 300, canvas.height-30);
 };
 
 // Now instantiate your objects.
@@ -103,6 +117,8 @@ for (var i = 0; i < levels[level][0]; i++) {
 
 // Place the player object in a variable called player
 var player = new Player;
+
+var score = new Score;
 
 
 
