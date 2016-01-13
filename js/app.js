@@ -15,7 +15,7 @@ randomX = function() {
 };
 
 randomY = function() {
-    return Math.ceil(Math.random() * rows) * tileY - 20;
+    return Math.ceil(Math.random() * rows) * tileY;
 };
 
 randomInteger = function(min, max) {
@@ -33,7 +33,7 @@ var Enemy = function() {
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
     this.x = randomX();
-    this.y = randomY();
+    this.y = randomY() - 20;
     this.length = 80;
     this.speed = Math.random() * gameinfo.levels[gameinfo.level][1] * 200 + 50;
 };
@@ -48,7 +48,7 @@ Enemy.prototype.update = function(dt) {
 
     if(this.x > canvas.width) {
         this.x = randomX() * -1 - this.length;
-        this.y = randomY();
+        this.y = randomY() - 20;
     }
     this.x += this.speed*dt;
     // Check for collision
@@ -66,7 +66,7 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 var Player = function() {
     this.hero = 'images/char-cat-girl.png';
-    this.x = (cols%2 + 1) * tileX;
+    this.x = (cols % 2 + 1) * tileX;
     this.y = (rows + 1) * tileY - 10;
     this.collision = false;
     this.lostLife = false;
@@ -109,6 +109,7 @@ var Gameinfo = function() {
     this.goal = -10;
     this.lives = 3;
     this.roadCrossings = 10;
+    this.gems = ['images/Gem Orange.png', 'images/Gem Blue.png', 'images/Gem Green.png'];
 };
 
 Gameinfo.prototype.update = function() {
@@ -134,6 +135,9 @@ Gameinfo.prototype.update = function() {
         this.roadCrossings = 10;
         this.level += 1;
         this.lives += 1;
+        this.gems = ['images/Gem Orange.png', 'images/Gem Blue.png', 'images/Gem Green.png'];
+        gem = new Gem(this.gems.pop());
+        console.log(this.gems.length);
         if (this.level < this.levels.length) {
             for ( var i = allEnemies.length; i < this.levels[this.level][0]; i++) {
                 allEnemies[i] = new Enemy;
@@ -165,6 +169,38 @@ Gameinfo.prototype.render = function() {
     }
 };
 
+var Gem = function(stone) {
+    this.stone = stone;
+    this.x = randomX();
+    this.y = randomY() - 10;
+    this.displayStart = randomInteger(5, 20);
+    this.displayEnd = randomInteger(this.displayStart + 2, this.displayStart + 10);
+    this.t = 0;
+    this.visible = false;
+};
+
+Gem.prototype.update = function(dt) {
+    // console.log(this.stone);
+    this.t += dt;
+    // console.log(this.displayStart, this.displayEnd, this.t);
+    if( this.t > this.displayStart) this.visible = true;
+    if( this.t > this.displayEnd) {
+        this.visible = false;
+        if (gameinfo.gems.length) gem = new Gem(gameinfo.gems.pop());
+        console.log(gameinfo.gems.length);
+    }
+    if(this.visible) {
+        if (this.x === player.x && this.y === player.y) {
+            this.displayEnd = 0;
+            gameinfo.score += 50;
+        }
+    }
+};
+
+Gem.prototype.render = function() {
+    if (this.visible) ctx.drawImage(Resources.get(this.stone), this.x, this.y);
+};
+
 // Now instantiate your objects.
 
 var gameinfo = new Gameinfo;
@@ -177,6 +213,8 @@ for (var i = 0; i < gameinfo.levels[gameinfo.level][0]; i++) {
 
 // Place the player object in a variable called player
 var player = new Player;
+
+var gem = new Gem(gameinfo.gems.pop());
 
 
 // This listens for key presses and sends the keys to your
