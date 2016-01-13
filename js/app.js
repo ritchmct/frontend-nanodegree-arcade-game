@@ -10,6 +10,18 @@ ctx.textAlign = "left";
 ctx.lineWidth = 3;
 ctx.fillStyle = "white";
 
+randomX = function() {
+    return Math.floor(Math.random() * cols) * tileX;
+};
+
+randomY = function() {
+    return Math.ceil(Math.random() * rows) * tileY - 20;
+};
+
+randomInteger = function(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
 
 
 // Enemies our player must avoid
@@ -20,10 +32,10 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-    this.x = Math.ceil(Math.random()*canvas.width*2)-canvas.width;
-    this.y = Math.ceil(Math.random()*rows) * tileY - 20;
+    this.x = randomX();
+    this.y = randomY();
+    this.length = 80;
     this.speed = Math.random() * gameinfo.levels[gameinfo.level][1] * 200 + 50;
-    // console.log(this.speed);
 };
 
 // Update the enemy's position, required method for game
@@ -35,14 +47,14 @@ Enemy.prototype.update = function(dt) {
     // console.log(canvas.width);
 
     if(this.x > canvas.width) {
-        this.x = Math.ceil(Math.random()*canvas.width)-canvas.width;
-        this.y = Math.ceil(Math.random()*rows) * tileY - 20;
+        this.x = randomX() * -1 - this.length;
+        this.y = randomY();
     }
     this.x += this.speed*dt;
     // Check for collision
     if ( Math.abs(this.y - player.y) < 20 ) {
-        if (( player.x >= this.x && player.x - this.x < 80) ||
-            ( this.x > player.x && this.x - player.x < 80 )) player.collision = true;
+        if (( player.x >= this.x && player.x - this.x < this.length) ||
+            ( this.x > player.x && this.x - player.x < this.length )) player.collision = true;
     }
 };
 
@@ -165,6 +177,7 @@ for (var i = 0; i < gameinfo.levels[gameinfo.level][0]; i++) {
 
 // Place the player object in a variable called player
 var player = new Player;
+
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
