@@ -8,7 +8,7 @@ var rows = 3;
 var cols = 5;
 
 playerInitialX = function() {
-    return (Math.floor(cols/2) + 1) * tileX;
+    return Math.floor(cols/2) * tileX;
 };
 
 playerInitialY = function() {
@@ -110,6 +110,11 @@ Player.prototype.handleInput = function(key) {
     if (key === "down") this.y += tileY;
 };
 
+Player.prototype.moveToInitialXY = function() {
+    this.x = playerInitialX();
+    this.y = playerInitialY();
+};
+
 var Gameinfo = function() {
     this.level = 1;
     this.levels = [[0,0], [4, 1], [5, 1.2], [6, 1.7]];
@@ -120,6 +125,8 @@ var Gameinfo = function() {
     this.gems = ['images/Gem Orange.png', 'images/Gem Blue.png', 'images/Gem Green.png'];
     this.started = false;
     this.gameover = false;
+    this.newLevel = false;
+    this.pause = false;
     this.heros = ['images/char-boy.png',
                     'images/char-cat-girl.png',
                     'images/char-horn-girl.png',
@@ -163,26 +170,28 @@ Gameinfo.prototype.update = function() {
         }
     }
     if (player.lostLife) {
-        player.lostLife = false;
+        // player.lostLife = false;
         this.goal = shiftY;
-        this.lives += -1;
+        this.lives--;
     }
     if (this.lives === 0) {
         this.gameover = true;
     }
     if (this.roadCrossings === 0) {
-        this.roadCrossings = 2;
         if (++this.level >= this.levels.length) {
             this.gameover = true;
             this.level--;
         } else {
+            player.moveToInitialXY();
+            this.roadCrossings = 2;
+            this.lives++;
+            this.newLevel = true;
+            this.goal = shiftY;
             this.gems = ['images/Gem Orange.png', 'images/Gem Blue.png', 'images/Gem Green.png'];
             gem = new Gem(this.gems.pop());
             console.log(this.gems.length);
-            if (this.level < this.levels.length) {
-                for ( var i = allEnemies.length; i < this.levels[this.level][0]; i++) {
+            for ( var i = allEnemies.length; i < this.levels[this.level][0]; i++) {
                     allEnemies[i] = new Enemy;
-                }
             }
         }
     }
@@ -190,7 +199,7 @@ Gameinfo.prototype.update = function() {
 
 Gameinfo.prototype.render = function() {
     // Test display properties
-    if (this.gameover) {
+    if(this.gameover) {
         if (this.lives === 0) {
             var gameOverTxt = "GAME OVER!";
         } else {
@@ -201,6 +210,27 @@ Gameinfo.prototype.render = function() {
         ctx.fillText(gameOverTxt, canvas.width/2, canvas.height/2);
         ctx.strokeText(gameOverTxt, canvas.width/2, canvas.height/2);
     }
+
+    if(this.newLevel) {
+        ctx.textAlign = "center";
+        ctx.font = "48pt Impact";
+        ctx.fillText("NEW LEVEL", canvas.width/2, canvas.height/2);
+        ctx.strokeText("NEW LEVEL", canvas.width/2, canvas.height/2);
+        setTimeout(function(){gameinfo.pause = false}, 2000);
+        this.pause = true;
+        this.newLevel = false;
+    }
+
+    if(player.lostLife && !this.gameover) {
+        ctx.textAlign = "center";
+        ctx.font = "48pt Impact";
+        ctx.fillText("BE CAREFUL!", canvas.width/2, canvas.height/2);
+        ctx.strokeText("BE CAREFUL!", canvas.width/2, canvas.height/2);
+        setTimeout(function(){gameinfo.pause = false}, 2000);
+        this.pause = true;
+        player.lostLife = false;
+    }
+
     ctx.font = "24pt Impact";
     ctx.textAlign = "left";
     ctx.lineWidth = 3;
