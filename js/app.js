@@ -1,17 +1,26 @@
 // Set size of row and column for use in moving player
 var tileX = 101;
 var tileY = 83;
+// An adjustment to make images lineup with background better
+var shiftY = -10;
 // Number of tile rows and columns
 var rows = 3;
 var cols = 5;
 
+playerInitialX = function() {
+    return (Math.floor(cols/2) + 1) * tileX;
+};
+
+playerInitialY = function() {
+    return (rows + 1) * tileY + shiftY;
+}
 
 randomX = function() {
     return Math.floor(Math.random() * cols) * tileX;
 };
 
 randomY = function() {
-    return Math.ceil(Math.random() * rows) * tileY - 10;
+    return Math.ceil(Math.random() * rows) * tileY + shiftY;
 };
 
 randomInteger = function(min, max) {
@@ -64,8 +73,8 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 var Player = function() {
     this.hero = 'images/char-cat-girl.png';
-    this.x = (cols % 2 + 1) * tileX;
-    this.y = (rows + 1) * tileY - 10;
+    this.x = playerInitialX();
+    this.y = playerInitialY();
     this.collision = false;
     this.lostLife = false;
 };
@@ -77,15 +86,15 @@ Player.prototype.update = function(dt) {
     if (this.collision) {
         this.collision = false;
         this.lostLife = true;
-        this.x = (cols%2 + 1) * tileX;
-        this.y = (rows + 1) * tileY - 10;
+        this.x = playerInitialX();
+        this.y = playerInitialY();
 
     }
     // Keep the player within the boundaries of the game
     if (this.x < 0) this.x = 0;
     if (this.x > (cols - 1) * tileX) this.x = (cols - 1) * tileX;
-    if (this.y < -10 ) this.y = -10;
-    if (this.y > (rows + 1) * tileY - 10) this.y = (rows + 1) * tileY - 10;
+    if (this.y < shiftY ) this.y = shiftY;
+    if (this.y > (rows + 1) * tileY + shiftY) this.y = (rows + 1) * tileY + shiftY;
 };
 
 // render()
@@ -105,7 +114,7 @@ var Gameinfo = function() {
     this.level = 1;
     this.levels = [[0,0], [4, 1], [5, 1.2], [6, 1.7]];
     this.score = 0;
-    this.goal = -10; // Initial goal is to make it to the top
+    this.goal = shiftY; // Initial goal is to make it to the top
     this.lives = 3;
     this.roadCrossings = 2;
     this.gems = ['images/Gem Orange.png', 'images/Gem Blue.png', 'images/Gem Green.png'];
@@ -126,7 +135,7 @@ Gameinfo.prototype.init = function() {
     ctx.strokeText("Select Player", canvas.width/2, 120);
     var inc = 0;
     this.heros.forEach( function(hero) {
-        ctx.drawImage(Resources.get(hero), inc++ * tileX, 4 * tileY - 10);
+        ctx.drawImage(Resources.get(hero), inc++ * tileX, 4 * tileY + shiftY);
     });
 };
 
@@ -135,7 +144,7 @@ Gameinfo.prototype.playerSelect = function(e) {
         var rect = canvas.getBoundingClientRect();
         var x = e.x - rect.left;
         var y = e.y - rect.top - 60;
-        if(y >= 4 * tileY -10 && y <= 5 * tileY - 10) {
+        if(y >= 4 * tileY + shiftY && y <= 5 * tileY + shiftY) {
             player.hero = this.heros[Math.floor(x/tileX)];
             this.started = true;
         }
@@ -147,15 +156,15 @@ Gameinfo.prototype.update = function() {
         this.score += 10; // Increase score
         this.roadCrossings += -1; // Decrease number of crossings left to make
         // If the goal was the top make it the bottom and vice versa
-        if (this.goal === -10) {
-            this.goal = (rows + 1) * tileY - 10;
+        if (this.goal === shiftY) {
+            this.goal = (rows + 1) * tileY + shiftY;
         } else {
-            this.goal = -10;
+            this.goal = shiftY;
         }
     }
     if (player.lostLife) {
         player.lostLife = false;
-        this.goal = -10;
+        this.goal = shiftY;
         this.lives += -1;
     }
     if (this.lives === 0) {
