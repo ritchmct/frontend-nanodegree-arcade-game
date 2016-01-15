@@ -105,11 +105,12 @@ var Gameinfo = function() {
     this.level = 1;
     this.levels = [[0,0], [4, 1], [5, 1.2], [6, 1.7]];
     this.score = 0;
-    this.goal = -10;
+    this.goal = -10; // Initial goal is to make it to the top
     this.lives = 3;
-    this.roadCrossings = 10;
+    this.roadCrossings = 2;
     this.gems = ['images/Gem Orange.png', 'images/Gem Blue.png', 'images/Gem Green.png'];
     this.started = false;
+    this.gameover = false;
     this.heros = ['images/char-boy.png',
                     'images/char-cat-girl.png',
                     'images/char-horn-girl.png',
@@ -142,10 +143,10 @@ Gameinfo.prototype.playerSelect = function(e) {
 };
 
 Gameinfo.prototype.update = function() {
-    if (player.y === this.goal && !player.lostLife) {
-        this.score += 10;
-        this.roadCrossings += -1;
-        // console.log("roadCrossings: ", this.roadCrossings);
+    if (player.y === this.goal && !player.lostLife) { // Reached the goal
+        this.score += 10; // Increase score
+        this.roadCrossings += -1; // Decrease number of crossings left to make
+        // If the goal was the top make it the bottom and vice versa
         if (this.goal === -10) {
             this.goal = (rows + 1) * tileY - 10;
         } else {
@@ -158,18 +159,21 @@ Gameinfo.prototype.update = function() {
         this.lives += -1;
     }
     if (this.lives === 0) {
-        this.level = 0;
+        this.gameover = true;
     }
     if (this.roadCrossings === 0) {
-        this.roadCrossings = 10;
-        this.level += 1;
-        this.lives += 1;
-        this.gems = ['images/Gem Orange.png', 'images/Gem Blue.png', 'images/Gem Green.png'];
-        gem = new Gem(this.gems.pop());
-        console.log(this.gems.length);
-        if (this.level < this.levels.length) {
-            for ( var i = allEnemies.length; i < this.levels[this.level][0]; i++) {
-                allEnemies[i] = new Enemy;
+        this.roadCrossings = 2;
+        if (++this.level >= this.levels.length) {
+            this.gameover = true;
+            this.level--;
+        } else {
+            this.gems = ['images/Gem Orange.png', 'images/Gem Blue.png', 'images/Gem Green.png'];
+            gem = new Gem(this.gems.pop());
+            console.log(this.gems.length);
+            if (this.level < this.levels.length) {
+                for ( var i = allEnemies.length; i < this.levels[this.level][0]; i++) {
+                    allEnemies[i] = new Enemy;
+                }
             }
         }
     }
@@ -177,6 +181,17 @@ Gameinfo.prototype.update = function() {
 
 Gameinfo.prototype.render = function() {
     // Test display properties
+    if (this.gameover) {
+        if (this.lives === 0) {
+            var gameOverTxt = "GAME OVER!";
+        } else {
+            var gameOverTxt = "WINNER!";
+        }
+        ctx.textAlign = "center";
+        ctx.font = "48pt Impact";
+        ctx.fillText(gameOverTxt, canvas.width/2, canvas.height/2);
+        ctx.strokeText(gameOverTxt, canvas.width/2, canvas.height/2);
+    }
     ctx.font = "24pt Impact";
     ctx.textAlign = "left";
     ctx.lineWidth = 3;
@@ -190,17 +205,7 @@ Gameinfo.prototype.render = function() {
     var scoreTxt = "SCORE: " + parseInt(this.score);
     ctx.fillText(scoreTxt, 350, canvas.height-30);
     ctx.strokeText(scoreTxt, 350, canvas.height-30);
-    if (this.lives === 0 || this.level >= this.levels.length ) {
-        if (this.lives === 0) {
-            var gameOverTxt = "GAME OVER!";
-        } else {
-            var gameOverTxt = "WINNER!";
-        }
-        ctx.textAlign = "center";
-        ctx.font = "48pt Impact";
-        ctx.fillText(gameOverTxt, canvas.width/2, canvas.height/2);
-        ctx.strokeText(gameOverTxt, canvas.width/2, canvas.height/2);
-    }
+
 };
 
 var Gem = function(stone) {

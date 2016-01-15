@@ -63,8 +63,7 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        if (gameinfo.lives
-         && gameinfo.level < gameinfo.levels.length) win.requestAnimationFrame(main);
+        if (!gameinfo.gameover) win.requestAnimationFrame(main);
     }
 
     /* This function does some initial setup that should only occur once,
