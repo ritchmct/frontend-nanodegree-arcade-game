@@ -4,25 +4,23 @@ var tileY = 83;
 // Number of tile rows and columns
 var rows = 3;
 var cols = 5;
-// Test display properties
-ctx.font = "24pt Impact";
-ctx.textAlign = "left";
-ctx.lineWidth = 3;
-ctx.fillStyle = "white";
+
 
 randomX = function() {
     return Math.floor(Math.random() * cols) * tileX;
 };
 
 randomY = function() {
-    return Math.ceil(Math.random() * rows) * tileY;
+    return Math.ceil(Math.random() * rows) * tileY - 10;
 };
 
 randomInteger = function(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-
+playerSelect = function() {
+    console.log("Player select");
+};
 
 // Enemies our player must avoid
 var Enemy = function() {
@@ -33,7 +31,7 @@ var Enemy = function() {
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
     this.x = randomX();
-    this.y = randomY() - 20;
+    this.y = randomY();
     this.length = 80;
     this.speed = Math.random() * gameinfo.levels[gameinfo.level][1] * 200 + 50;
 };
@@ -48,7 +46,7 @@ Enemy.prototype.update = function(dt) {
 
     if(this.x > canvas.width) {
         this.x = randomX() * -1 - this.length;
-        this.y = randomY() - 20;
+        this.y = randomY();
     }
     this.x += this.speed*dt;
     // Check for collision
@@ -81,6 +79,7 @@ Player.prototype.update = function(dt) {
         this.lostLife = true;
         this.x = (cols%2 + 1) * tileX;
         this.y = (rows + 1) * tileY - 10;
+
     }
     // Keep the player within the boundaries of the game
     if (this.x < 0) this.x = 0;
@@ -110,6 +109,36 @@ var Gameinfo = function() {
     this.lives = 3;
     this.roadCrossings = 10;
     this.gems = ['images/Gem Orange.png', 'images/Gem Blue.png', 'images/Gem Green.png'];
+    this.started = false;
+    this.heros = ['images/char-boy.png',
+                    'images/char-cat-girl.png',
+                    'images/char-horn-girl.png',
+                    'images/char-pink-girl.png',
+                    'images/char-princess-girl.png'];
+};
+
+Gameinfo.prototype.init = function() {
+    ctx.textAlign = "center";
+    ctx.font = "48pt Impact";
+    ctx.fillStyle = "white";
+    ctx.fillText("Select Player", canvas.width/2, 120);
+    ctx.strokeText("Select Player", canvas.width/2, 120);
+    var inc = 0;
+    this.heros.forEach( function(hero) {
+        ctx.drawImage(Resources.get(hero), inc++ * tileX, 4 * tileY - 10);
+    });
+};
+
+Gameinfo.prototype.playerSelect = function(e) {
+    if(!this.started) {
+        var rect = canvas.getBoundingClientRect();
+        var x = e.x - rect.left;
+        var y = e.y - rect.top - 60;
+        if(y >= 4 * tileY -10 && y <= 5 * tileY - 10) {
+            player.hero = this.heros[Math.floor(x/tileX)];
+            this.started = true;
+        }
+    }
 };
 
 Gameinfo.prototype.update = function() {
@@ -147,6 +176,11 @@ Gameinfo.prototype.update = function() {
 };
 
 Gameinfo.prototype.render = function() {
+    // Test display properties
+    ctx.font = "24pt Impact";
+    ctx.textAlign = "left";
+    ctx.lineWidth = 3;
+    ctx.fillStyle = "white";
     var levelTxt = "LEVEL: " + (parseInt(this.level));
     ctx.fillText(levelTxt, 10, canvas.height-30);
     ctx.strokeText(levelTxt, 10, canvas.height-30);
@@ -172,7 +206,7 @@ Gameinfo.prototype.render = function() {
 var Gem = function(stone) {
     this.stone = stone;
     this.x = randomX();
-    this.y = randomY() - 10;
+    this.y = randomY();
     this.displayStart = randomInteger(5, 20);
     this.displayEnd = randomInteger(this.displayStart + 2, this.displayStart + 10);
     this.t = 0;
@@ -229,3 +263,4 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+

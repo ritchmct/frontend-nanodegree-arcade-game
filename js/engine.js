@@ -27,7 +27,14 @@ var Engine = (function(global) {
 
     canvas.width = 505;
     canvas.height = 606;
+    // canvas.height = 581;
     doc.body.appendChild(canvas);
+
+    canvas.onmouseup = function(e) {
+        // var rect = canvas.getBoundingClientRect();
+        // gameinfo.playerSelect(e.x - rect.left, e.y - rect.top);
+        gameinfo.playerSelect(e);
+    };
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -56,7 +63,8 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        if (gameinfo.lives && gameinfo.level < gameinfo.levels.length) win.requestAnimationFrame(main);
+        if (gameinfo.lives
+         && gameinfo.level < gameinfo.levels.length) win.requestAnimationFrame(main);
     }
 
     /* This function does some initial setup that should only occur once,
@@ -79,7 +87,9 @@ var Engine = (function(global) {
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
-        updateEntities(dt);
+        if( gameinfo.started ) {
+            updateEntities(dt);
+        }
         // checkCollisions();
     }
 
@@ -138,7 +148,13 @@ var Engine = (function(global) {
             }
         }
 
-        renderEntities();
+        // renderEntities();
+
+        if(gameinfo.started) {
+            renderEntities();
+        } else {
+            gameinfo.init();
+        }
     }
 
     /* This function is called by the render function and is called on each game
@@ -165,6 +181,7 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
+        // gameinfo.init();
         // noop
     }
 
@@ -179,6 +196,9 @@ var Engine = (function(global) {
         'images/enemy-bug.png',
         'images/char-boy.png',
         'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-pink-girl.png',
+        'images/char-princess-girl.png',
         'images/Gem Blue.png',
         'images/Gem Green.png',
         'images/Gem Orange.png'
