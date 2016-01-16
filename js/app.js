@@ -1,35 +1,38 @@
+"use strict";
 // Set size of row and column for use in moving player
 var tileX = 101;
 var tileY = 83;
-// An adjustment to make images lineup with background better
-var shiftY = -10;
 // Number of tile rows and columns
 var rows = 3;
 var cols = 5;
+// An adjustment to make images lineup with background better
+var shiftY = -10;
+// Top and bottom Y values for player
+var topY = -10;
+var bottomY = (rows + 1) * tileY + shiftY;
 
-playerInitialX = function() {
+// var ctx;
+// var canvas;
+
+function playerInitialX() {
     return Math.floor(cols/2) * tileX;
-};
-
-playerInitialY = function() {
-    return (rows + 1) * tileY + shiftY;
 }
 
-randomX = function() {
+function playerInitialY() {
+    return bottomY;
+}
+
+function randomX() {
     return Math.floor(Math.random() * cols) * tileX;
-};
+}
 
-randomY = function() {
+function randomY() {
     return Math.ceil(Math.random() * rows) * tileY + shiftY;
-};
+}
 
-randomInteger = function(min, max) {
+function randomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
-playerSelect = function() {
-    console.log("Player select");
-};
+}
 
 // Enemies our player must avoid
 var Enemy = function() {
@@ -56,6 +59,7 @@ Enemy.prototype.update = function(dt) {
     if(this.x > canvas.width) {
         this.x = randomX() * -1 - this.length;
         this.y = randomY();
+        this.speed = Math.random() * gameinfo.levels[gameinfo.level][1] * 200 + 50;
     }
     this.x += this.speed*dt;
     // Check for collision
@@ -117,11 +121,11 @@ Player.prototype.moveToInitialXY = function() {
 
 var Gameinfo = function() {
     this.level = 1;
-    this.levels = [[0,0], [4, 1], [5, 1.2], [6, 1.7]];
+    this.levels = [[0,0], [4, 1.0], [5, 1.5], [6, 2.0]];
     this.score = 0;
-    this.goal = shiftY; // Initial goal is to make it to the top
+    this.goal = topY; // Initial goal is to make it to the top
     this.lives = 3;
-    this.roadCrossings = 2;
+    this.roadCrossings = 10;
     this.gems = ['images/Gem Orange.png', 'images/Gem Blue.png', 'images/Gem Green.png'];
     this.started = false;
     this.gameover = false;
@@ -163,35 +167,37 @@ Gameinfo.prototype.update = function() {
         this.score += 10; // Increase score
         this.roadCrossings += -1; // Decrease number of crossings left to make
         // If the goal was the top make it the bottom and vice versa
-        if (this.goal === shiftY) {
-            this.goal = (rows + 1) * tileY + shiftY;
+        if (this.goal === topY) {
+            this.goal = bottomY;
         } else {
-            this.goal = shiftY;
+            this.goal = topY;
         }
     }
+
     if (player.lostLife) {
         // player.lostLife = false;
-        this.goal = shiftY;
+        this.goal = topY;
         this.lives--;
     }
+
     if (this.lives === 0) {
         this.gameover = true;
     }
+
     if (this.roadCrossings === 0) {
         if (++this.level >= this.levels.length) {
             this.gameover = true;
             this.level--;
         } else {
             player.moveToInitialXY();
-            this.roadCrossings = 2;
+            this.roadCrossings = 10;
             this.lives++;
             this.newLevel = true;
-            this.goal = shiftY;
+            this.goal = topY;
             this.gems = ['images/Gem Orange.png', 'images/Gem Blue.png', 'images/Gem Green.png'];
             gem = new Gem(this.gems.pop());
-            console.log(this.gems.length);
             for ( var i = allEnemies.length; i < this.levels[this.level][0]; i++) {
-                    allEnemies[i] = new Enemy;
+                    allEnemies[i] = new Enemy();
             }
         }
     }
@@ -200,15 +206,16 @@ Gameinfo.prototype.update = function() {
 Gameinfo.prototype.render = function() {
     // Test display properties
     if(this.gameover) {
+        var message;
         if (this.lives === 0) {
-            var gameOverTxt = "GAME OVER!";
+            message = "GAME OVER!";
         } else {
-            var gameOverTxt = "WINNER!";
+            message = "WINNER!";
         }
         ctx.textAlign = "center";
         ctx.font = "48pt Impact";
-        ctx.fillText(gameOverTxt, canvas.width/2, canvas.height/2);
-        ctx.strokeText(gameOverTxt, canvas.width/2, canvas.height/2);
+        ctx.fillText(message, canvas.width/2, canvas.height/2);
+        ctx.strokeText(message, canvas.width/2, canvas.height/2);
     }
 
     if(this.newLevel) {
@@ -216,7 +223,7 @@ Gameinfo.prototype.render = function() {
         ctx.font = "48pt Impact";
         ctx.fillText("NEW LEVEL", canvas.width/2, canvas.height/2);
         ctx.strokeText("NEW LEVEL", canvas.width/2, canvas.height/2);
-        setTimeout(function(){gameinfo.pause = false}, 2000);
+        setTimeout(function(){gameinfo.pause = false;}, 2000);
         this.pause = true;
         this.newLevel = false;
     }
@@ -226,7 +233,7 @@ Gameinfo.prototype.render = function() {
         ctx.font = "48pt Impact";
         ctx.fillText("BE CAREFUL!", canvas.width/2, canvas.height/2);
         ctx.strokeText("BE CAREFUL!", canvas.width/2, canvas.height/2);
-        setTimeout(function(){gameinfo.pause = false}, 2000);
+        setTimeout(function(){gameinfo.pause = false;}, 2000);
         this.pause = true;
         player.lostLife = false;
     }
@@ -258,14 +265,12 @@ var Gem = function(stone) {
 };
 
 Gem.prototype.update = function(dt) {
-    // console.log(this.stone);
     this.t += dt;
-    // console.log(this.displayStart, this.displayEnd, this.t);
     if( this.t > this.displayStart) this.visible = true;
+
     if( this.t > this.displayEnd) {
         this.visible = false;
         if (gameinfo.gems.length) gem = new Gem(gameinfo.gems.pop());
-        console.log(gameinfo.gems.length);
     }
     if(this.visible) {
         if (this.x === player.x && this.y === player.y) {
@@ -281,16 +286,16 @@ Gem.prototype.render = function() {
 
 // Now instantiate your objects.
 
-var gameinfo = new Gameinfo;
+var gameinfo = new Gameinfo();
 
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [];
 for (var i = 0; i < gameinfo.levels[gameinfo.level][0]; i++) {
-    allEnemies[i] = new Enemy;
+    allEnemies[i] = new Enemy();
 }
 
 // Place the player object in a variable called player
-var player = new Player;
+var player = new Player();
 
 var gem = new Gem(gameinfo.gems.pop());
 
