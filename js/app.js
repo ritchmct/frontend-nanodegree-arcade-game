@@ -243,14 +243,18 @@ Gameinfo.prototype.render = function() {
     ctx.lineWidth = 3;
     ctx.fillStyle = "white";
     var levelTxt = "LEVEL: " + (parseInt(this.level));
-    ctx.fillText(levelTxt, 10, canvas.height-30);
-    ctx.strokeText(levelTxt, 10, canvas.height-30);
+    ctx.fillText(levelTxt, 10, canvas.height-80);
+    ctx.strokeText(levelTxt, 10, canvas.height-80);
+    var xingsTxt = "CROSSINGS: " + (parseInt(10 - this.roadCrossings));
+    ctx.fillText(xingsTxt, 10, canvas.height-30);
+    ctx.strokeText(xingsTxt, 10, canvas.height-30);
+    ctx.textAlign = "right";
     var livesTxt = "LIVES: " + (parseInt(this.lives));
-    ctx.fillText(livesTxt, 175, canvas.height-30);
-    ctx.strokeText(livesTxt, 175, canvas.height-30);
+    ctx.fillText(livesTxt, canvas.width -10, canvas.height-80);
+    ctx.strokeText(livesTxt, canvas.width -10, canvas.height-80);
     var scoreTxt = "SCORE: " + parseInt(this.score);
-    ctx.fillText(scoreTxt, 350, canvas.height-30);
-    ctx.strokeText(scoreTxt, 350, canvas.height-30);
+    ctx.fillText(scoreTxt, canvas.width - 10, canvas.height-30);
+    ctx.strokeText(scoreTxt, canvas.width - 10, canvas.height-30);
 
 };
 
