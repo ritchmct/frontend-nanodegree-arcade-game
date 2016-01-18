@@ -32,9 +32,7 @@ var Engine = (function(global) {
     doc.body.appendChild(canvas);
 
     canvas.onmouseup = function(e) {
-        // var rect = canvas.getBoundingClientRect();
-        // gameinfo.playerSelect(e.x - rect.left, e.y - rect.top);
-        gameinfo.playerSelect(e);
+        gameinfo.selectPlayer(e);
     };
 
     /* This function serves as the kickoff point for the game loop itself
@@ -155,7 +153,7 @@ var Engine = (function(global) {
         if(gameinfo.started) {
             renderEntities();
         } else {
-            gameinfo.init();
+            gameinfo.displayPlayers();
         }
     }
 
@@ -183,7 +181,6 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // gameinfo.init();
         // noop
     }
 

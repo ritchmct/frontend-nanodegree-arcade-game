@@ -1,4 +1,32 @@
-"use strict";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: app.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: app.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
 // Set size of row and column for use in moving player
 var tileX = 101;
 var tileY = 83;
@@ -75,9 +103,9 @@ Enemy.prototype.update = function(dt) {
 
     this.x += this.speed*dt;
     // Check for collision. If collision, set player.collision to true
-    if ( Math.abs(this.y - player.y) < 20 ) {
-        if (( player.x >= this.x && player.x - this.x < this.length) ||
-            ( this.x > player.x && this.x - player.x < this.length )) player.collision = true;
+    if ( Math.abs(this.y - player.y) &lt; 20 ) {
+        if (( player.x >= this.x &amp;&amp; player.x - this.x &lt; this.length) ||
+            ( this.x > player.x &amp;&amp; this.x - player.x &lt; this.length )) player.collision = true;
     }
 };
 
@@ -114,9 +142,9 @@ Player.prototype.update = function() {
 
     }
     // Keep the player within the boundaries of the game
-    if (this.x < 0) this.x = 0;
+    if (this.x &lt; 0) this.x = 0;
     if (this.x > (cols - 1) * tileX) this.x = (cols - 1) * tileX;
-    if (this.y < shiftY ) this.y = shiftY;
+    if (this.y &lt; shiftY ) this.y = shiftY;
     if (this.y > (rows + 1) * tileY + shiftY) this.y = (rows + 1) * tileY + shiftY;
 };
 
@@ -207,7 +235,7 @@ Gameinfo.prototype.selectPlayer = function(e) {
         var y = e.y - rect.top - 60;
         // Check to see if mouse has been clicked on a player
         // If so, set this to our player and start game
-        if(y >= 4 * tileY + shiftY && y <= 5 * tileY + shiftY) {
+        if(y >= 4 * tileY + shiftY &amp;&amp; y &lt;= 5 * tileY + shiftY) {
             player.hero = this.heros[Math.floor(x/tileX)];
             this.started = true;
         }
@@ -219,7 +247,7 @@ Gameinfo.prototype.selectPlayer = function(e) {
  */
 Gameinfo.prototype.update = function() {
     // Reached the goal?
-    if (player.y === this.goal && !player.lostLife) {
+    if (player.y === this.goal &amp;&amp; !player.lostLife) {
         // Increase score
         this.score += 10;
         // Decrease number of crossings left to make
@@ -262,7 +290,7 @@ Gameinfo.prototype.update = function() {
             // Create a new gem
             gem = new Gem(this.gems.pop());
             // Add new enemies if the new level so dictates
-            for ( var i = allEnemies.length; i < this.levels[this.level][0]; i++) {
+            for ( var i = allEnemies.length; i &lt; this.levels[this.level][0]; i++) {
                     allEnemies[i] = new Enemy();
             }
         }
@@ -298,7 +326,7 @@ Gameinfo.prototype.render = function() {
         this.newLevel = false;
     }
 
-    if(player.lostLife && !this.gameover) {
+    if(player.lostLife &amp;&amp; !this.gameover) {
         ctx.textAlign = "center";
         ctx.font = "48pt Impact";
         ctx.fillText("BE CAREFUL!", canvas.width/2, canvas.height/2);
@@ -369,7 +397,7 @@ Gem.prototype.update = function(dt) {
 
     // Check to see if player has collected gem. If so, increase score
     if(this.visible) {
-        if (this.x === player.x && this.y === player.y) {
+        if (this.x === player.x &amp;&amp; this.y === player.y) {
             this.displayEnd = 0;
             gameinfo.score += 50;
         }
@@ -390,7 +418,7 @@ var gameinfo = new Gameinfo();
 
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [];
-for (var i = 0; i < gameinfo.levels[gameinfo.level][0]; i++) {
+for (var i = 0; i &lt; gameinfo.levels[gameinfo.level][0]; i++) {
     allEnemies[i] = new Enemy();
 }
 
@@ -414,3 +442,26 @@ document.addEventListener('keyup', function(e) {
     player.handleInput(allowedKeys[e.keyCode]);
 });
 
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Enemy.html">Enemy</a></li><li><a href="Gameinfo.html">Gameinfo</a></li><li><a href="Gem.html">Gem</a></li><li><a href="Player.html">Player</a></li></ul><h3>Global</h3><ul><li><a href="global.html#playerInitialX">playerInitialX</a></li><li><a href="global.html#playerInitialY">playerInitialY</a></li><li><a href="global.html#randomInteger">randomInteger</a></li><li><a href="global.html#randomX">randomX</a></li><li><a href="global.html#randomY">randomY</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Jan 18 2016 21:40:11 GMT+0000 (GMT Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

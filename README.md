@@ -1,4 +1,4 @@
-# FrontEnd Nanodegree Arcade Game
+# Front-End Nanodegree Arcade Game
 This is a simple JavaScript game based on the 1981 arcade game Frogger. The basic objective being to direct the player across the road while avoiding the moving traffic.
 
 ## Access to game
