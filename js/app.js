@@ -1,4 +1,3 @@
-"use strict";
 // Set size of row and column for use in moving player
 var tileX = 101;
 var tileY = 83;

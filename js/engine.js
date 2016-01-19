@@ -1,4 +1,3 @@
-"use strict";
 /* Engine.js
  * This file provides the game loop functionality (update entities and render),
  * draws the initial game board on the screen, and then calls the update and
@@ -28,9 +27,12 @@ var Engine = (function(global) {
 
     canvas.width = 505;
     canvas.height = 606;
-    // canvas.height = 581;
     doc.body.appendChild(canvas);
 
+    /* Create a mouseup event listener on the canvas object for use in
+     * player selection. Couldn't add in app.js as canvas not defined
+     * when app.js first runs. (There's probably a better way to do this)
+     */
     canvas.onmouseup = function(e) {
         gameinfo.selectPlayer(e);
     };
@@ -209,5 +211,6 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+    // Make canvas available to app.js too
     global.canvas = canvas;
 })(this);
