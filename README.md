@@ -1,8 +1,8 @@
 # Front-End Nanodegree Arcade Game
-This is a simple JavaScript game based on the 1981 arcade game Frogger. The basic objective being to direct the player across the road while avoiding the moving traffic.
+This is a simple JavaScript game based on the 1981 arcade game Frogger. The basic objective being to direct the player across the road while avoiding the moving traffic. This is a fork of the udacity/frontend-nanodegree-arcade-game. Udacity have provided all the resources for the basic game functionality.
 
 ## Access to game
-The game will run in most browsers and can be accessed directly [here](http://???)
+The game will run in most browsers and can be accessed directly [here](http://ritchmct.github.io/frontend-nanodegree-arcade-game/)
 
 OR
 
