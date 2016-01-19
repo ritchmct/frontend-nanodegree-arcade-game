@@ -202,11 +202,14 @@ Gameinfo.prototype.selectPlayer = function(e) {
     if(!this.started) {
         // Translate window coordinates to canvas tile coordinates
         var rect = canvas.getBoundingClientRect();
-        var x = e.x - rect.left;
-        var y = e.y - rect.top - 60;
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top - 50;
+        console.log(4 * tileY + shiftY, 5 * tileY + shiftY);
+        console.log(e);
+        console.log(rect.left, rect.top);
         // Check to see if mouse has been clicked on a player
         // If so, set this to our player and start game
-        if(y >= 4 * tileY + shiftY && y <= 5 * tileY + shiftY) {
+        if(y>= 4 * tileY && y <= 5 * tileY) {
             player.hero = this.heros[Math.floor(x/tileX)];
             this.started = true;
         }
