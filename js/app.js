@@ -204,9 +204,6 @@ Gameinfo.prototype.selectPlayer = function(e) {
         var rect = canvas.getBoundingClientRect();
         var x = e.clientX - rect.left;
         var y = e.clientY - rect.top - 50;
-        console.log(4 * tileY + shiftY, 5 * tileY + shiftY);
-        console.log(e);
-        console.log(rect.left, rect.top);
         // Check to see if mouse has been clicked on a player
         // If so, set this to our player and start game
         if(y>= 4 * tileY && y <= 5 * tileY) {
